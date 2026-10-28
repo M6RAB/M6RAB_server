@@ -27,8 +27,8 @@ def send_command():
     data = request.json
     vid = data.get('vid')
     cmd = data.get('cmd')
-    arg = data.get('arg', '') # استقبال الرابط أو أي إدخال إضافي
-    COMMANDS[vid] = {"cmd": cmd, "arg": arg}
+    arg = data.get('arg', '')
+    COMMANDS[vid] = {"command": cmd, "arg": arg}
     return jsonify({"status": "sent"}), 200
 
 @app.route('/check_command/<vid>', methods=['GET'])
