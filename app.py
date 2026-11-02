@@ -4,6 +4,7 @@ import requests, json, time, os, hashlib
 app = Flask(__name__)
 
 # ==========================================
+# الويب هوك الجديد حقك
 WEBHOOK_URL = "https://discord.com/api/webhooks/1561247907213086720/uM2sBufoeaXJvnyL3kJoe8eJLcaJ5nCfJ1elh0QIodJChuQHE9PFEmJ7Dy7zFMfm0-eo"
 # ==========================================
 
